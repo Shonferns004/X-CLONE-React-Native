@@ -4,6 +4,7 @@ import { connectDB } from "./config/db.js";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import userRoutes from "./routes/user.route.js";
+import postRoutes from "./routes/post.route.js";
 
 const app = express();
 
@@ -12,11 +13,14 @@ app.use(clerkMiddleware());
 app.use(express.json());
 
 
-app.get("/", (req, res) => {
-    res.send("Hello World");
-});
-
 app.use("/api/auth", userRoutes);
+app.use("/api/posts", postRoutes);
+
+
+app.use((err,req,res)=>{
+    console.error(err.stack);
+    res.status(500).json({message: "Internal server error"});
+})
 
 const startServer = async () => {
     try {
